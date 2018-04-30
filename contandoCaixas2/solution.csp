@@ -1,0 +1,148 @@
+nametype MAXVARNUMBER = {0..100} 
+channel show : {0..100}
+
+datatype countFirstLine.MAXVARNUMBER
+datatype countLastLine.MAXVARNUMBER
+datatype findFirstBoxLeft.Bool
+datatype findFirstBoxRight.Bool
+datatype firstBoxLeft.MAXVARNUMBER
+datatype firstBoxRight.MAXVARNUMBER
+datatype lastBoxLeft.MAXVARNUMBER
+datatype lastBoxRight.MAXVARNUMBER
+datatype countForward.MAXVARNUMBER
+
+INIT_VARIABLES() =
+    set.countFirstLine!(0) ->
+    set.countLastLine!(0) ->
+    set.findFirstBoxLeft!(false) ->
+    set.findFirstBoxRight!(false) ->
+    set.firstBoxLeft!(10) ->
+    set.firstBoxRight!(10) ->
+    set.lastBoxLeft!(0) ->
+    set.lastBoxRight!(0) ->
+    set.countForward!(0); SKIP
+
+--countLeft
+PROCEDURE1() =
+(let 
+    get.X?x -> 
+    get.Y?y -> 
+    get.ORIENTATION?o -> 
+    get.BX?bx ->
+    get.BY?by ->
+     --Must I put here the 'gets' of variables?
+    get.findFirstBoxLeft?var1 ->
+    get.countForward?var2 ->
+   
+    if(leftIsObstacle(x, y, o, bx, by)) then (
+        set.countFirstLine!(var1+1) ->                
+        
+        if(not (var)) then (
+            set.firstBoxLeft!(var2) ->
+            set.findFirstBoxLeft!(true) ; SKIP
+        ) else (
+            SKIP    
+        )
+
+        set.lastBoxLeft!(var2) ; SKIP
+    )
+within
+    SKIP
+
+) ; SKIP
+
+--countRight
+PROCEDURE2() =
+(let 
+    get.X?x -> 
+    get.Y?y -> 
+    get.ORIENTATION?o -> 
+    get.BX?bx ->
+    get.BY?by ->
+     --Must I put here the 'gets' of variables?
+    get.findFirstBoxRight?var1 ->
+    get.countForward?var2 ->
+   
+    if(leftIsObstacle(x, y, o, bx, by)) then (
+        set.countFirstLine!(var1+1) ->                
+        
+        if(not (var)) then (
+            set.firstBoxRight!(var2) ->
+            set.findFirstBoxRight!(true) ; SKIP
+        ) else (
+            SKIP    
+        )
+        set.lastBoxRight!(var2) ; SKIP
+    )
+within
+    SKIP
+
+) ; SKIP
+
+--showsMoreBoxes
+PROCEDURE3() = 
+    get.countFirstLine?var1 ->
+    get.countLastLine?var2 ->
+    
+    if(var1 > var2) then (
+        show!1 ->
+        show!(var1 - var2) ; SKIP
+    ) else if(var1 < var2) then (
+        show!2 ->
+        show!(var1 - var2) ; SKIP
+    ) else (
+        show!3 ->
+        show!(var1 - var2) ; SKIP
+    )
+
+--getBoxFirstLine
+PROCEDURE4() = 
+    get.firstBoxLeft?var1 ->
+    get.firstBoxRight?var2 ->
+
+    if(var1 > var2) then (
+        show!1 ; SKIP
+    ) else if(var1 > var2) then (
+        show!2 ; SKIP
+    ) else {
+        show!3 ; SKIP
+    }
+
+--program
+PROCEDURE5() =
+    RIGHT
+    ;
+    (let
+        WHILE =
+            get.X?x -> 
+            get.Y?y -> 
+            get.ORIENTATION?o -> 
+            get.BX?bx ->
+            get.BY?by ->
+            get.countForward?var1 ->
+            if(frontIsClear(x,y,o,bx,by)) then (
+                PROCEDURE1() ->
+                PROCEDURE2() ->
+                FORWARD(1) ->
+                set.countForward(var1+1) ; SKIP
+            ) else (
+                SKIP 
+            )
+        within
+            WHILE
+    ) ;
+        
+    PROCEDURE1() ->
+    PROCEDURE2() ->
+    get.countFirstLine?var1 ->
+    get.countLastLine?var2 ->
+    show!(countFirstLine) ->
+    show!(countLastLine) ->
+    PROCEDURE3() ->
+    PROCEDURE4() ->
+    PROCEDURE5 ; SKIP
+
+
+
+
+
