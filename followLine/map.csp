@@ -1,0 +1,21 @@
+PAINT = < (White,Hor,2,2), (White,Ver,2,2), (White,Hor,3,2), (White,Hor,4,2), (White,Hor,5,2), (White,Hor,6,2), (White,Hor,7,2), (White,Hor,8,2), (White,Hor,9,2), (White,Hor,10,2), (White,Hor,11,2), (White,Hor,12,2), (White,Hor,13,2), (White,Hor,14,2), (White,Hor,15,2), (White,Hor,16,2), (White,Hor,17,2), (White,Hor,18,2), (White,Hor,19,2), (White,Ver,20,2), (White,Ver,2,3), (White,Ver,20,3), (White,Ver,2,4), (White,Hor,4,4), (White,Ver,4,4), (White,Hor,5,4), (White,Hor,6,4), (White,Hor,7,4), (White,Hor,8,4), (White,Hor,9,4), (White,Hor,10,4), (White,Hor,11,4), (White,Hor,12,4), (White,Hor,13,4), (White,Hor,14,4), (White,Hor,15,4), (White,Hor,16,4), (White,Hor,17,4), (White,Ver,18,4), (White,Ver,20,4), (White,Ver,2,5), (White,Ver,4,5), (White,Ver,18,5), (White,Ver,20,5), (White,Ver,2,6), (White,Ver,4,6), (White,Ver,6,6), (White,Hor,6,6), (White,Hor,7,6), (White,Hor,8,6), (White,Hor,9,6), (White,Hor,10,6), (White,Hor,11,6), (White,Hor,12,6), (White,Hor,13,6), (White,Hor,14,6), (White,Hor,15,6), (White,Hor,16,6), (White,Hor,17,6), (White,Ver,20,6), (White,Ver,2,7), (White,Ver,4,7), (White,Ver,6,7), (White,Ver,20,7), (White,Ver,2,8), (White,Ver,4,8), (White,Hor,6,8), (White,Hor,7,8), (White,Hor,8,8), (White,Hor,9,8), (White,Hor,10,8), (White,Hor,11,8), (White,Hor,12,8), (White,Hor,13,8), (White,Hor,14,8), (White,Hor,15,8), (White,Hor,16,8), (White,Hor,17,8), (White,Ver,18,8), (White,Ver,20,8), (White,Ver,2,9), (White,Ver,4,9), (White,Ver,20,9), (White,Ver,2,10), (White,Ver,4,10), (White,Ver,20,10), (White,Ver,2,11), (White,Hor,4,11), (White,Hor,5,11), (White,Hor,6,11), (White,Hor,7,11), (White,Hor,8,11), (White,Hor,9,11), (White,Hor,10,11), (White,Hor,11,11), (White,Hor,12,11), (White,Hor,13,11), (White,Hor,14,11), (White,Hor,15,11), (White,Hor,16,11), (White,Hor,17,11), (White,Hor,18,11), (White,Hor,19,11), (White,Ver,2,12), (White,Hor,2,13), (White,Hor,3,13), (White,Hor,4,13), (White,Hor,5,13), (White,Hor,6,13), (White,Hor,7,13), (White,Hor,8,13), (White,Hor,9,13), (White,Hor,10,13), (White,Hor,11,13), (White,Hor,12,13), (White,Hor,13,13), (White,Hor,14,13), (White,Hor,15,13), (White,Hor,16,13), (White,Hor,17,13), (White,Hor,18,13), (White,Hor,19,13) >
+
+RAW_MAP = <
+<Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs>,
+<Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs>,     --here
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs,Obs,Empty,Empty,Empty,Empty,Empty,Obs,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Obs,Empty,Empty,Empty,Empty,Obs,Obs,Empty,Empty,Empty,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Obs,Obs>,
+<Obs,Obs,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Empty,Start,Obs,Obs>,
+<Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs>,
+<Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs,Obs>
+>
+

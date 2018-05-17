@@ -1,0 +1,44 @@
+COMMANDS =
+	RIGHT
+	; 
+	(let
+	   WHILE =
+		   get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c -> 
+		   if (true) then (
+		     (let
+		        IFONLY =
+		          get.X?x -> 
+		     	   get.Y?y -> 
+		     	   get.ORIENTATION?o -> 
+		     	   get.BX?bx -> 
+		     	   get.BY?by -> 
+		     	   coin?c -> 
+		     	   if(frontIsObstacle(x,y,o)) then (
+		     	     RIGHT
+		     	     ; 
+		     	     SKIP
+		     	     
+		     	   ) else (
+		     	     SKIP
+		     	   ) 
+		     	 within
+		     	   IFONLY
+		     ) 
+		     ; 
+		     SKIP
+		      
+		     ; 
+		     WHILE
+		   ) else ( 
+		     SKIP 
+		   )
+	 within
+	   WHILE
+	)
+	; 
+	SKIP

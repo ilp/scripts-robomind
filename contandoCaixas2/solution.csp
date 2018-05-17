@@ -1,115 +1,107 @@
-nametype MAXVARNUMBER = {0..100} 
-channel show : {0..100}
+nametype MAXVARNUMBER = {0..11}
+nametype BOOL = {0, 1} 
+channel show : Int
 
-datatype countFirstLine.MAXVARNUMBER
-datatype countLastLine.MAXVARNUMBER
-datatype findFirstBoxLeft.Bool
-datatype findFirstBoxRight.Bool
-datatype firstBoxLeft.MAXVARNUMBER
-datatype firstBoxRight.MAXVARNUMBER
-datatype lastBoxLeft.MAXVARNUMBER
-datatype lastBoxRight.MAXVARNUMBER
-datatype countForward.MAXVARNUMBER
+datatype VarTypes = countFirstLine.{0..1} | countLastLine.{0..1} | findFirstBoxLeft.BOOL | findFirstBoxRight.BOOL | firstBoxLeft.{0..1} | firstBoxRight.{0..1} | lastBoxLeft.{0..1} | lastBoxRight.{0..1} | countForward.{0..11}
 
-INIT_VARIABLES() =
-    set.countFirstLine!(0) ->
-    set.countLastLine!(0) ->
-    set.findFirstBoxLeft!(false) ->
-    set.findFirstBoxRight!(false) ->
-    set.firstBoxLeft!(10) ->
-    set.firstBoxRight!(10) ->
-    set.lastBoxLeft!(0) ->
-    set.lastBoxRight!(0) ->
-    set.countForward!(0); SKIP
+INIT_VAR = { (countFirstLine, 0), (countLastLine, 0), (findFirstBoxLeft, 0), (findFirstBoxRight, 0), (firstBoxLeft, 10), (firstBoxLeft, 10), (lastBoxLeft, 0), (lastBoxRight, 0) } 
+
+-- read/write channel
+channel getVar,setVar : VarTypes
+
+--MEMORY TO VARIABLES
+-- memory cell
+McelVar(v,val) = getVar!v!val -> McelVar(v,val) 
+              [] setVar!v?val_ -> McelVar(v,val_)
+
+-- memory
+MemoryVar(binding) = ||| (v,val) : binding @ McelVar(v,val)
+
+MEMORY2 = MemoryVar(INIT_VAR)
 
 --countLeft
-PROCEDURE1() =
-(let 
+PROCEDURE1() = 
     get.X?x -> 
     get.Y?y -> 
     get.ORIENTATION?o -> 
     get.BX?bx ->
     get.BY?by ->
-     --Must I put here the 'gets' of variables?
-    get.findFirstBoxLeft?var1 ->
-    get.countForward?var2 ->
-   
-    if(leftIsObstacle(x, y, o, bx, by)) then (
-        set.countFirstLine!(var1+1) ->                
+     --Must I put here the 'gets' of all variables?
+    getVar.findFirstBoxLeft?var1 ->
+    getVar.countForward?var2 ->
+
+    if(leftIsObstacle(x, y, o)) then (
+       var1 <= 10 & setVar.countFirstLine!(var1-1)+1 -> 
         
-        if(not (var)) then (
-            set.firstBoxLeft!(var2) ->
-            set.findFirstBoxLeft!(true) ; SKIP
+        if(var1 != 1) then (
+            var2 <= 10 & setVar.firstBoxLeft!var2 ->
+            setVar.findFirstBoxLeft!1 -> SKIP            
         ) else (
             SKIP    
-        )
+        ) ;
 
-        set.lastBoxLeft!(var2) ; SKIP
+        var2 <= 10 & setVar.lastBoxLeft!var2 -> SKIP
+    ) else (
+        SKIP
     )
-within
-    SKIP
-
-) ; SKIP
+  
 
 --countRight
 PROCEDURE2() =
-(let 
     get.X?x -> 
     get.Y?y -> 
     get.ORIENTATION?o -> 
     get.BX?bx ->
     get.BY?by ->
-     --Must I put here the 'gets' of variables?
-    get.findFirstBoxRight?var1 ->
-    get.countForward?var2 ->
+     --Must I put here the 'gets' of all variables?
+    getVar.findFirstBoxRight?var1 ->
+    getVar.countForward?var2 ->
    
-    if(leftIsObstacle(x, y, o, bx, by)) then (
-        set.countFirstLine!(var1+1) ->                
+    if(rightIsObstacle(x, y, o)) then (
+        var1 <= 10 & setVar.countFirstLine!var1+1 ->
         
-        if(not (var)) then (
-            set.firstBoxRight!(var2) ->
-            set.findFirstBoxRight!(true) ; SKIP
+        if(var1 != 1) then (
+            var2 <= 10 & setVar.firstBoxRight!var2 ->
+            setVar.findFirstBoxRight!1 -> SKIP
         ) else (
             SKIP    
-        )
-        set.lastBoxRight!(var2) ; SKIP
+        ) ;
+        var2 <= 10 & setVar.lastBoxRight!var2 -> SKIP
+    ) else (
+        SKIP
     )
-within
-    SKIP
-
-) ; SKIP
 
 --showsMoreBoxes
 PROCEDURE3() = 
-    get.countFirstLine?var1 ->
-    get.countLastLine?var2 ->
+    getVar.countFirstLine?var1 ->
+    getVar.countLastLine?var2 ->
     
     if(var1 > var2) then (
         show!1 ->
-        show!(var1 - var2) ; SKIP
+        show!(var1 - var2) -> SKIP
     ) else if(var1 < var2) then (
         show!2 ->
-        show!(var1 - var2) ; SKIP
+        show!(var1 - var2) -> SKIP
     ) else (
         show!3 ->
-        show!(var1 - var2) ; SKIP
+        show!(var1 - var2) -> SKIP
     )
 
 --getBoxFirstLine
 PROCEDURE4() = 
-    get.firstBoxLeft?var1 ->
-    get.firstBoxRight?var2 ->
+    getVar.firstBoxLeft?var1 ->
+    getVar.firstBoxRight?var2 ->
 
     if(var1 > var2) then (
-        show!1 ; SKIP
+        show!1 -> SKIP
     ) else if(var1 > var2) then (
-        show!2 ; SKIP
-    ) else {
-        show!3 ; SKIP
-    }
+        show!2 -> SKIP
+    ) else (
+        show!3 -> SKIP
+    )
 
 --program
-PROCEDURE5() =
+COMMANDS =
     RIGHT
     ;
     (let
@@ -119,30 +111,25 @@ PROCEDURE5() =
             get.ORIENTATION?o -> 
             get.BX?bx ->
             get.BY?by ->
-            get.countForward?var1 ->
+            getVar.countForward?var1->
             if(frontIsClear(x,y,o,bx,by)) then (
-                PROCEDURE1() ->
-                PROCEDURE2() ->
-                FORWARD(1) ->
-                set.countForward(var1+1) ; SKIP
+                PROCEDURE1() ;
+                PROCEDURE2() ;
+                FORWARD(1) ;
+                var1 <= 10 & setVar.countForward!(var1+1) -> SKIP ; SKIP
             ) else (
                 SKIP 
             )
         within
             WHILE
-    ) ;
-        
-    PROCEDURE1() ->
-    PROCEDURE2() ->
-    get.countFirstLine?var1 ->
-    get.countLastLine?var2 ->
-    show!(countFirstLine) ->
-    show!(countLastLine) ->
-    PROCEDURE3() ->
-    PROCEDURE4() ->
-    PROCEDURE5 ; SKIP
-
-
-
-
-
+    ) 
+    ;  --tera uma tabela de simbolos no spoofax - contexto  
+    PROCEDURE1() ;
+    PROCEDURE2() ;
+    getVar.countFirstLine?var1 -> 
+    getVar.countLastLine?var2 ->
+    show!(var1) -> 
+    show!(var2) -> SKIP ;
+    PROCEDURE3() ;
+    PROCEDURE4() ; SKIP
+ 

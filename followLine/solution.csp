@@ -1,0 +1,40 @@
+
+PROCEDURE1 = 
+	get.X?x -> 
+    get.Y?y -> 
+    get.ORIENTATION?o -> 
+    get.BX?bx ->
+    get.BY?by ->
+	if(rightIsWhite(x,y,o)) then (
+		RIGHT
+	) else (
+		SKIP
+	)
+
+PROCEDURE2 = 
+	get.X?x -> 
+    get.Y?y -> 
+    get.ORIENTATION?o -> 
+    get.BX?bx ->
+    get.BY?by ->
+	if(leftIsWhite(x,y,o)) then (
+		LEFT
+	) else (
+		SKIP
+	)
+
+COMMANDS =
+	get.X?x -> 
+    get.Y?y -> 
+    get.ORIENTATION?o -> 
+    get.BX?bx ->
+    get.BY?by ->
+	if(frontIsBeacon(x,y,o,bx,by)) then (
+		STOP
+	) else (
+		SKIP
+	)
+	;
+	PROCEDURE1 ; SKIP ;
+	PROCEDURE2 ; SKIP ;
+	FORWARD(1) ; SKIP 

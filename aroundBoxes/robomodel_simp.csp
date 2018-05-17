@@ -1,0 +1,386 @@
+
+{-
+
+ROBO CSP specification v0.7, 27/04/2016
+Sidney de Carvalho Nogueira (sidney.ufrpe@gmail.com)
+
+Notes:
+- RAW_MAP, PAINT and COMMANDS are assumed to be in context 
+- RAW_MAP is assumed to be a retangule
+- there is no command to move the beacon  
+- paint is static 
+- procedures are not supported
+- due to performance issues, we are not considering the beacon can be moved, it is static
+
+coordinate system is:
+
+0,0 1,0 ... X,0
+0,1 1,1 ... X,1
+0,2 1,2 ... X,2
+...
+0,Y 1,Y ... X,Y
+
+where Y is YMAX and X is XMAX
+
+-}
+
+--
+-- map elements
+--
+
+datatype Colors = White | Black
+
+datatype StrokeTypes = Dot | Hor | Ver
+
+-- Obs represents obstacles as Tiles and Palms
+
+datatype Things = Empty | Obs | Beacon | Start | Paint.Colors
+
+--
+-- map building
+--
+
+-- inputs a sequence that represents the map 
+-- outputs a sequence of tuples of the type (x,y,element)
+-- x (column number) starts at 0
+-- y (line number) starts at 0
+
+map2Seq(raw) = 
+  let
+    map2Seq_(<>,  y) =  <>
+    map2Seq_(<line>^tail,  y) = processLine(line,y) ^ map2Seq_(tail,y+1)
+  within
+    map2Seq_(raw, 0)
+
+processLine(line, y) = 
+  let
+    processLine_(<>, _, _) = <>
+    processLine_(<Empty>^tail, x, y) = processLine_(tail, x+1, y)
+    processLine_(<element>^tail, x, y) = <(x, y, element)> ^ processLine_(tail, x+1, y)
+  within 
+    processLine_(line, 0, y)
+
+map2Set(map) = 
+  let
+    map2Set_(<>) = {}
+    map2Set_(<(x,y,element)>^tail) = union({(x,y,element)}, map2Set_(tail))
+  within
+    map2Set_(map)
+
+-- inputs a paint sequence
+-- outputs a set of map coordinates that match the paint
+
+formatPaint(<>) = {}
+formatPaint(<(c, t, x, y)>^tail) = 
+  let
+    format(c,t,x,y) =  
+      if(t == Dot) then
+        {(x,y,Paint.c)}
+      else if (t == Hor) then
+        {(x,y,Paint.c), (x+1,y,Paint.c)}
+      else -- Ver
+        {(x,y,Paint.c), (x,y+1,Paint.c)}
+  within
+    union(format(c,t,x,y), formatPaint(tail))
+  
+-- validates whether the input map is a retangule
+isRetangule(map) = let
+    numberOfCells(<>) = 0
+    numberOfCells(<line>^tail) = #line + numberOfCells(tail)
+  within
+    (numberOfCells(map) / #map ) == #head(map)
+
+IS_RETANGULE = isRetangule(RAW_MAP)
+
+-- initialising the map
+MAP = union( formatPaint(PAINT) , map2Set(map2Seq(RAW_MAP)) ) 
+
+--
+-- variables and memory
+--
+
+-- map limits
+COLUMNS = length(head(RAW_MAP))
+LINES = length(RAW_MAP)  
+XMAX = COLUMNS-1
+YMAX = LINES-1
+
+-- orientation 
+NORTH_ = 0
+EAST_ = 1
+SOUTH_ = 2
+WEST_ = 3
+
+-- types
+-- the objects inside the map cannot take the minimum and the maximum indexes
+-- these coordinates are reserved by the map border
+nametype TX = {1..XMAX-1}
+nametype TY = {1..YMAX-1}
+nametype TO = {NORTH_,EAST_,SOUTH_,WEST_}
+nametype TBX = if(STATIC_BEACON) then {startBX} else TX
+nametype TBY = if(STATIC_BEACON) then {startBY} else TY
+
+
+-- variable types
+datatype VarType = X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+
+-- read/write channel
+channel get,set : VarType
+
+-- memory cell
+Mcel(v,val) = get!v!val -> Mcel(v,val) 
+              [] set!v?val_ -> Mcel(v,val_)
+
+-- memory
+Memory(binding) = ||| (v,val) : binding @ Mcel(v,val)
+
+
+-- memory initial bindings
+single({x}) = x
+
+startX = single({ x | (x,y,Start) <- MAP })
+startY = single({ y | (x,y,Start) <- MAP })
+startBX = let
+    xbeacon = { x | (x,y,Beacon) <- MAP }
+  within
+    if(xbeacon != {}) then
+      single(xbeacon)
+    else
+      -1
+
+startBY = let
+    ybeacon = { y | (x,y,Beacon) <- MAP }
+  within
+    if(ybeacon != {}) then
+      single(ybeacon)
+    else
+      -1
+
+INIT = { (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) } 
+
+ 
+-- memory initial behaviour
+MEMORY = Memory(INIT)
+
+
+--
+-- auxiliary functions  INICIO DA PARTE DE IVERSON QUE VOU TENTAR MUDAR: Itamar
+--
+
+-- things within a given position
+thingsAt(col,lin) =  { t | (c,l,t) <- MAP, c==col, l==lin }
+
+-- calculates the maximum number of movies to NORTH
+max2NORTH(c, l, xb, yb) = let
+    obs = { t | t <- thingsAt(c,l-1), t == Obs }
+    beaconFree = yb != l-1 or xb != c 
+  within 
+    if( l-1 >= 0 and card(obs) == 0 and beaconFree ) then
+      1 + max2NORTH(c, l-1, xb, yb)
+    else
+      0 
+
+-- calculates the maximum number of movies to EAST
+max2EAST(c, l, xb, yb) = let
+    obs = { t | t <- thingsAt(c+1,l), t == Obs }
+    beaconFree = yb != l or xb != c+1 
+  within 
+    if( c+1 <= XMAX and card(obs) == 0 and beaconFree ) then
+      1 + max2EAST(c+1, l, xb, yb)
+    else
+      0 
+
+-- calculates the maximum number of movies to SOUTH
+max2SOUTH(c, l, xb, yb) = let
+    obs = { t | t <- thingsAt(c,l+1), t == Obs }
+    beaconFree = yb != l+1 or xb != c 
+  within 
+    if( l+1 <= YMAX and card(obs) == 0 and beaconFree ) then
+      1 + max2SOUTH(c, l+1, xb, yb)
+    else
+      0 
+
+-- calculates the maximum number of movies to WEST
+max2WEST(c, l, xb, yb) = let
+    obs = { t | t <- thingsAt(c-1,l), t == Obs }
+    beaconFree = yb != l or xb != c-1 
+  within 
+    if( c-1 >= 0 and card(obs) == 0 and beaconFree ) then
+      1 + max2WEST(c-1, l, xb, yb)
+    else
+      0 
+
+--
+-- moving commands
+--
+
+-- auxiliary for movement commands
+max(n1,n2) = if(n1 > n2) then n1 else n2
+channel backward, forward : {1}
+
+MOVE_STEPS(0,o) = SKIP
+MOVE_STEPS(n,o) = 
+  get!X?x ->
+  get!Y?y ->
+  get!BX?bx ->
+  get!BY?by ->   
+  if(o == NORTH_) then (
+    if(frontIsClear(x,y,o,bx,by)) then
+      forward!1 -> set.Y!(y - 1) -> MOVE_STEPS(n-1, o)
+    else 
+      forward!1 -> 
+      MOVE_STEPS(0, o)
+  ) else if(o == EAST_) then (
+    if(frontIsClear(x,y,o,bx,by)) then
+      forward!1 -> set.X!(x + 1) ->  MOVE_STEPS(n-1, o)
+    else
+      forward!1 -> 
+      MOVE_STEPS(0, o)
+  ) else if(o == SOUTH_) then (
+    if(frontIsClear(x,y,o,bx,by)) then
+      forward!1 -> set.Y!(y + 1) -> MOVE_STEPS(n-1, o)
+    else
+      forward!1 -> 
+      MOVE_STEPS(0, o)
+  ) else if(o == WEST_) then (
+    if(frontIsClear(x,y,o,bx,by)) then
+       forward!1 -> set.X!(x - 1) -> MOVE_STEPS(n-1, o)
+    else
+      forward!1 -> 
+      MOVE_STEPS(0, o)
+  ) else
+    error("MOVE_STEPS only defined for n in {0,1,2,3}")
+
+
+MOVE_STEPS_BACK(0,o) = SKIP
+MOVE_STEPS_BACK(n,o) = 
+  get!X?x ->
+  get!Y?y ->
+  get!BX?bx ->
+  get!BY?by ->   
+  if(o == NORTH_) then (
+    if(frontIsClear(x,y,(o+2)%4,bx,by)) then
+       backward!1 -> set.Y!(y + 1) -> MOVE_STEPS_BACK(n-1, o)
+    else
+      backward!1 -> 
+      MOVE_STEPS_BACK(0, o)
+  ) else if(o == EAST_) then (
+    if(frontIsClear(x,y,(o+2)%4,bx,by)) then
+       backward!1 -> set.X!(x - 1) ->MOVE_STEPS_BACK(n-1, o)
+    else
+      backward!1 -> 
+      MOVE_STEPS_BACK(0, o)
+  ) else if(o == SOUTH_) then (
+    if(frontIsClear(x,y,(o+2)%4,bx,by)) then
+       backward!1 -> set.Y!(y - 1) -> MOVE_STEPS_BACK(n-1, o)
+    else
+      backward!1 -> 
+      MOVE_STEPS_BACK(0, o)
+  ) else if(o == WEST_) then (
+    if(frontIsClear(x,y,(o+2)%4,bx,by)) then
+       backward!1 -> set.X!(x + 1) -> MOVE_STEPS_BACK(n-1, o)
+    else
+      backward!1 -> 
+      MOVE_STEPS_BACK(0, o)
+  ) else
+    error("MOVE_STEPS only defined for n in {0,1,2,3}")
+
+-- moving commands
+channel right, left, north, south, east, west
+
+RIGHT = right -> get!ORIENTATION?o -> set!ORIENTATION!(o+1)%4 ->  SKIP
+
+LEFT  = left -> get!ORIENTATION?o -> set!ORIENTATION!(o-1)%4 -> SKIP
+
+FORWARD(n) = get!ORIENTATION?o -> MOVE_STEPS(n,o)
+
+NORTH(n) = north -> set.ORIENTATION!NORTH_ -> FORWARD(n)
+
+EAST(n) = east -> set.ORIENTATION!EAST_ -> FORWARD(n)
+
+SOUTH(n) = south -> set.ORIENTATION!SOUTH_ -> FORWARD(n)
+
+WEST(n) = west -> set.ORIENTATION!WEST_ -> FORWARD(n)
+
+BACKWARD(n) =  get!ORIENTATION?o -> MOVE_STEPS_BACK(n,o) 
+
+--
+-- see functions
+--
+
+-- looks for obstacles
+thingsInFront(x,y,o) = 
+  if(o == NORTH_) then
+    thingsAt(x,y-1)
+  else if (o == EAST_) then
+    thingsAt(x+1,y)
+  else if (o == SOUTH_) then
+    thingsAt(x,y+1)
+  else
+    thingsAt(x-1,y)
+
+-- looks for beacon
+beaconInFront(x,y,o,bx,by) = 
+  if(o == NORTH_) then
+    x == bx and y-1 == by
+  else if (o == EAST_) then
+    x+1 == bx and y == by
+  else if (o == SOUTH_) then
+    x == bx and y+1 == by
+  else
+    x-1 == bx and y == by
+
+  
+leftIsWhite(x,y,o)  = member(Paint.White,thingsInFront(x,y,(o-1)%4))
+frontIsWhite(x,y,o) = member(Paint.White,thingsInFront(x,y,o))
+rightIsWhite(x,y,o) = member(Paint.White,thingsInFront(x,y,(o+1)%4))
+  
+leftIsBlack(x,y,o)  = member(Paint.Black,thingsInFront(x,y,(o-1)%4))
+frontIsBlack(x,y,o) = member(Paint.Black,thingsInFront(x,y,o))
+rightIsBlack(x,y,o) = member(Paint.Black,thingsInFront(x,y,(o+1)%4))
+
+
+leftIsObstacle(x,y,o)  = member(Obs,thingsInFront(x,y,(o-1)%4)) or
+                         member(Beacon,thingsInFront(x,y,(o-1)%4))
+frontIsObstacle(x,y,o) = member(Obs,thingsInFront(x,y,o)) or
+                         member(Beacon,thingsInFront(x,y,o))
+rightIsObstacle(x,y,o) = member(Obs,thingsInFront(x,y,(o+1)%4)) or
+                         member(Beacon,thingsInFront(x,y,(o+1)%4))
+
+leftIsBeacon(x,y,o,bx,by) = beaconInFront(x,y,(o-1)%4,bx,by)
+frontIsBeacon(x,y,o,bx,by) = beaconInFront(x,y,o,bx,by)
+rightIsBeacon(x,y,o,bx,by) = beaconInFront(x,y,(o+1)%4,bx,by)
+
+leftIsClear(x,y,o,bx,by)  = not(leftIsObstacle(x,y,o)) and 
+                            not(leftIsBeacon(x,y,o,bx,by))  
+frontIsClear(x,y,o,bx,by) = not(frontIsObstacle(x,y,o)) and 
+                            not(frontIsBeacon(x,y,o,bx,by))
+rightIsClear(x,y,o,bx,by) = not(rightIsObstacle(x,y,o)) and 
+                            not(rightIsBeacon(x,y,o,bx,by))
+
+--
+-- program snipets
+--
+
+channel coin : Bool
+
+END = STOP
+
+REPEAT(P, 0) = SKIP
+REPEAT(P, n) = P; REPEAT(P, n-1)
+
+
+--
+-- simulation model
+--
+
+PROGRAM_DEBUG = COMMANDS [|{|get,set|}|] MEMORY
+PROGRAM = PROGRAM_DEBUG \ {|get,set,coin|}
+
+--
+-- simulation model for verification with test purposes
+--
+
+channel get2 : VarType
+MEMORY_GET2 = MEMORY [[ get.x <- get.x, get.x <- get2.x | x <- extensions(get) ]]
+PROGRAM_DEBUG_GET2 = (COMMANDS [|{|get,set|}|] MEMORY_GET2) \ {|get,coin|}
