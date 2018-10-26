@@ -122,7 +122,8 @@ nametype TBY = if(STATIC_BEACON) then {startBY} else TY
 
 
 -- variable types
-datatype VarType = X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+--uncomment later
+--datatype VarType = X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
 
 -- read/write channel
 channel get,set : VarType
@@ -156,8 +157,13 @@ startBY = let
     else
       -1
 
-INIT = { (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) } 
+--uncomment later
+--INIT = { (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) } 
 
+-- to print values of variables
+
+channel showInt : Int
+channel showBool : Bool
  
 -- memory initial behaviour
 MEMORY = Memory(INIT)
@@ -365,6 +371,9 @@ rightIsClear(x,y,o,bx,by) = not(rightIsObstacle(x,y,o)) and
 channel coin : Bool
 
 END = STOP
+
+REPEAT(P, 0) = SKIP
+REPEAT(P, n) = P; REPEAT(P, n-1)
 
 --
 -- simulation model

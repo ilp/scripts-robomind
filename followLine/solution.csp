@@ -1,40 +1,93 @@
 
-PROCEDURE1 = 
-	get.X?x -> 
-    get.Y?y -> 
-    get.ORIENTATION?o -> 
-    get.BX?bx ->
-    get.BY?by ->
-	if(rightIsWhite(x,y,o)) then (
-		RIGHT
-	) else (
-		SKIP
-	)
+nametype MAXVAR = {0..3}
+datatype VarType =  X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+INIT = {  (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) }
 
-PROCEDURE2 = 
-	get.X?x -> 
-    get.Y?y -> 
-    get.ORIENTATION?o -> 
-    get.BX?bx ->
-    get.BY?by ->
-	if(leftIsWhite(x,y,o)) then (
-		LEFT
-	) else (
-		SKIP
-	)
+followRightProc = 
+	(let
+	   IFONLY =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		    
+		   if(rightIsWhite(x,y,o)) then (
+		     RIGHT
+		     ; 	  
+		     
+		     SKIP
+		   ) else (
+		     SKIP
+		   ) 
+		 within
+		   IFONLY
+	) 
+	; 	  
+	
+	SKIP			
+followLeftProc = 
+	(let
+	   IFONLY =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		    
+		   if(leftIsWhite(x,y,o)) then (
+		     LEFT
+		     ; 	 
+		     
+		     SKIP
+		   ) else (
+		     SKIP
+		   ) 
+		 within
+		   IFONLY
+	) 
+	; 	  
+	
+	SKIP			
 
-COMMANDS =
-	get.X?x -> 
-    get.Y?y -> 
-    get.ORIENTATION?o -> 
-    get.BX?bx ->
-    get.BY?by ->
-	if(frontIsBeacon(x,y,o,bx,by)) then (
-		STOP
-	) else (
-		SKIP
+COMMANDS = 
+	LEFT
+	; 	 
+	
+	(let
+	   WHILE = 
+	     (let
+	        IFONLY =
+	          get.X?x -> 
+	     	   get.Y?y -> 
+	     	   get.ORIENTATION?o -> 
+	     	   get.BX?bx -> 
+	     	   get.BY?by -> 
+	     	   coin?c ->
+	     	    
+	     	   if(frontIsBeacon(x,y,o,bx,by)) then (
+	     	     TBD-BREAK;
+	     	     SKIP
+	     	   ) else (
+	     	     SKIP
+	     	   ) 
+	     	 within
+	     	   IFONLY
+	     ) 
+	     ; 	  
+	     
+	     
+	     FORWARD(1)
+	       ;
+	     
+	     SKIP 
+	     ; 
+	     WHILE
+	 within
+	   WHILE
 	)
-	;
-	PROCEDURE1 ; SKIP ;
-	PROCEDURE2 ; SKIP ;
-	FORWARD(1) ; SKIP 
+	; 	  
+	
+	SKIP

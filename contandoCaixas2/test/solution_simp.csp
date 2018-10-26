@@ -1,0 +1,31 @@
+aConst = 2
+bConst = 1
+
+nametype MAXVAR = {0..11}
+datatype VarType = a.Int | b.Int |  X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+INIT = { (a,2),(b,1), (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) }
+
+
+COMMANDS = 
+  (let
+     WHILE = 
+       get.a?aVar ->
+       get.b?bVar ->
+       
+       if(member((bVar + 1), MAXVAR)) then (
+        set.a!((bVar + 1)) -> SKIP
+       ) else (
+        error -> SKIP
+       ) ;
+       get.a?aVar ->
+       
+       showInt!(aVar) ->
+       SKIP 
+       ; 
+       WHILE
+   within
+     WHILE
+  )
+  ;     
+  
+  SKIP

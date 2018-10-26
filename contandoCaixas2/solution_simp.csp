@@ -1,68 +1,121 @@
-nametype MAXVAR = {0..3}
-datatype VarType = X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY | countLine.MAXVAR | lookLine.MAXVAR
+countLineGlobal = 0
+lookLineGlobal = 0
 
-INIT = { (countLine, 0), (lookLine, 2), (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) } 
+nametype MAXVAR = {0..11}
+datatype VarType = side.MAXVAR |countLine.MAXVAR | lookLine.MAXVAR |  X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+INIT = { (side,0),(countLine,0),(lookLine,0), (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) }
 
-channel show : Int
-
-PROCEDURE1(side) = 
-	get.X?x -> 
-    get.Y?y -> 
-    get.ORIENTATION?o -> 
-    get.BX?bx ->
-    get.BY?by ->
-	get.countLine?var1 ->
-	get.lookLine?var2 ->
-	if(side == 1) then (
-        if(leftIsObstacle(x,y,o)) then (            
-            member(var1+1, MAXVAR) & set.countLine!(var1+1) -> SKIP
-        ) else (
-            SKIP
-        )
-	) else (
-        if(rightIsObstacle(x,y,o)) then (            
-            member(var1+1, MAXVAR) & set.countLine!(var1+1) -> SKIP
-        ) else (
-            SKIP
-        )
-        ;
-		SKIP
-	) 
+countLineProc(sideParam) =
+    set.side!(sideParam) -> 
+    
+    (let
+       IFELSE =
+         get.X?x -> 
+           get.Y?y -> 
+           get.ORIENTATION?o -> 
+           get.BX?bx -> 
+           get.BY?by -> 
+           coin?c ->
+           get.side?sideVar ->
+            
+           if((sideVar == 1)) then (
+             (let
+                IFONLY =
+                  get.X?x -> 
+                   get.Y?y -> 
+                   get.ORIENTATION?o -> 
+                   get.BX?bx -> 
+                   get.BY?by -> 
+                   coin?c ->
+                    
+                   if(leftIsObstacle(x,y,o)) then (
+                     get.countLine?countLineVar ->
+                     get.countLine?countLineVar ->
+                     
+                     member((countLineVar + 1), MAXVAR) & set.countLine!((countLineVar + 1)) ->
+                     SKIP
+                   ) else (
+                     SKIP
+                   ) 
+                 within
+                   IFONLY
+             ) 
+             ;    
+             
+             SKIP
+           ) else (
+             (let
+                IFONLY =
+                  get.X?x -> 
+                   get.Y?y -> 
+                   get.ORIENTATION?o -> 
+                   get.BX?bx -> 
+                   get.BY?by -> 
+                   coin?c ->
+                    
+                   if(rightIsObstacle(x,y,o)) then (
+                     get.countLine?countLineVar ->
+                     get.countLine?countLineVar ->
+                     
+                     member((countLineVar + 1), MAXVAR) & set.countLine!((countLineVar + 1)) ->
+                     SKIP
+                   ) else (
+                     SKIP
+                   ) 
+                 within
+                   IFONLY
+             ) 
+             ;    
+             
+             SKIP
+           ) 
+         within
+           IFELSE
+    ) 
+    ;    
+    
+    SKIP        
 
 COMMANDS = 
-	RIGHT
-	;
-	(let
-		WHILE = 
-			get.X?x -> 
-            get.Y?y -> 
-            get.ORIENTATION?o -> 
-            get.BX?bx ->
-            get.BY?by ->
-        	get.countLine?var1 ->
-            get.lookLine?var2 ->
-        	if(frontIsClear(x,y,o,bx,by)) then (
-        		PROCEDURE1(var2) ;
-        		FORWARD(1) 
-                ;
-                WHILE
-        	) else (
-        		SKIP
-        	)
-            ;
-            SKIP
-        within
-    		WHILE
+    RIGHT
+    ;     
+    
+    (let
+       WHILE =
+           get.X?x -> 
+           get.Y?y -> 
+           get.ORIENTATION?o -> 
+           get.BX?bx -> 
+           get.BY?by -> 
+           coin?c ->
+                 
+           if (frontIsClear(x,y,o,bx,by)) then (
+             get.lookLine?lookLineVar ->
+             
+             countLineProc(lookLineVar)
+             ;
+             
+             
+             FORWARD(1)
+               ;
+             
+             SKIP 
+             ; 
+             WHILE
+           ) else ( 
+             SKIP 
+           )
+     within
+       WHILE
     )
-	;
+    ;    
+    
+    get.lookLine?lookLineVar ->
+    
+    countLineProc(lookLineVar)
+    ;
+    
+    get.countLine?countLineVar ->
+    
+    showInt!(countLineVar) ->
     SKIP
-    ;
-    get.lookLine?var1 ->
-	PROCEDURE1(var1) 
-    ;
-    SKIP
-    ;
-	get.countLine?var1 -> 
-	show!(var1) -> SKIP 
-
-

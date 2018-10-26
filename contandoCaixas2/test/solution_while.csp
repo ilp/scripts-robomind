@@ -1,0 +1,482 @@
+countFirstLineConst = 0
+countLastLineConst = 0
+findFirstBoxLeftConst = 0
+findFirstBoxRightConst = 0
+firstBoxLeftConst = 10
+firstBoxRightConst = 10
+lastBoxLeftConst = 0
+lastBoxRightConst = 0
+countForwardConst = 0
+
+nametype MAXVAR = {0..11}
+datatype VarType = side.MAXVAR |countFirstLine.MAXVAR | countLastLine.MAXVAR | findFirstBoxLeft.MAXVAR | findFirstBoxRight.MAXVAR | firstBoxLeft.MAXVAR | firstBoxRight.MAXVAR | lastBoxLeft.MAXVAR | lastBoxRight.MAXVAR | countForward.MAXVAR |  X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+INIT = { (side,0),(countFirstLine,0),(countLastLine,0),(findFirstBoxLeft,0),(findFirstBoxRight,0),(firstBoxLeft,10),(firstBoxRight,10),(lastBoxLeft,0),(lastBoxRight,0),(countForward,0), (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) }
+
+countLeftProc() = 
+	(let
+	   IFONLY =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		    
+		   if(leftIsObstacle(x,y,o)) then (
+		     get.countFirstLine?countFirstLineVar ->
+		     get.countFirstLine?countFirstLineVar ->
+		     
+		     member((countFirstLineVar + 1), MAXVAR) & set.countFirstLine!((countFirstLineVar + 1)) ->
+		     (let
+		        IFONLY =
+		          get.X?x -> 
+		     	   get.Y?y -> 
+		     	   get.ORIENTATION?o -> 
+		     	   get.BX?bx -> 
+		     	   get.BY?by -> 
+		     	   coin?c ->
+		     	   get.findFirstBoxLeft?findFirstBoxLeftVar ->
+		     	    
+		     	   if(not ((findFirstBoxLeftVar == 0))) then (
+		     	     get.firstBoxLeft?firstBoxLeftVar ->
+		     	     get.countForward?countForwardVar ->
+		     	     
+		     	     member(countForwardVar, MAXVAR) & set.firstBoxLeft!(countForwardVar) ->
+		     	     get.findFirstBoxLeft?findFirstBoxLeftVar ->
+		     	     
+		     	     member(1, MAXVAR) & set.findFirstBoxLeft!(1) ->
+		     	     SKIP
+		     	   ) else (
+		     	     SKIP
+		     	   ) 
+		     	 within
+		     	   IFONLY
+		     ) 
+		     ; 	  
+		     
+		     get.lastBoxLeft?lastBoxLeftVar ->
+		     get.countForward?countForwardVar ->
+		     
+		     member(countForwardVar, MAXVAR) & set.lastBoxLeft!(countForwardVar) ->
+		     SKIP
+		   ) else (
+		     SKIP
+		   ) 
+		 within
+		   IFONLY
+	) 
+	; 	  
+	
+	SKIP			
+countBoxesProc(sideParam) =
+	set.side!(sideParam) -> 
+	
+	(let
+	   IFELSE =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		   get.side?sideVar ->
+		    
+		   if((sideVar == 1)) then (
+		     (let
+		        IFONLY =
+		          get.X?x -> 
+		     	   get.Y?y -> 
+		     	   get.ORIENTATION?o -> 
+		     	   get.BX?bx -> 
+		     	   get.BY?by -> 
+		     	   coin?c ->
+		     	    
+		     	   if(leftIsObstacle(x,y,o)) then (
+		     	     get.countFirstLine?countFirstLineVar ->
+		     	     get.countFirstLine?countFirstLineVar ->
+		     	     
+		     	     member((countFirstLineVar + 1), MAXVAR) & set.countFirstLine!((countFirstLineVar + 1)) ->
+		     	     (let
+		     	        IFONLY =
+		     	          get.X?x -> 
+		     	     	   get.Y?y -> 
+		     	     	   get.ORIENTATION?o -> 
+		     	     	   get.BX?bx -> 
+		     	     	   get.BY?by -> 
+		     	     	   coin?c ->
+		     	     	   get.findFirstBoxLeft?findFirstBoxLeftVar ->
+		     	     	    
+		     	     	   if(not ((findFirstBoxLeftVar == 0))) then (
+		     	     	     get.firstBoxLeft?firstBoxLeftVar ->
+		     	     	     get.countForward?countForwardVar ->
+		     	     	     
+		     	     	     member(countForwardVar, MAXVAR) & set.firstBoxLeft!(countForwardVar) ->
+		     	     	     get.findFirstBoxLeft?findFirstBoxLeftVar ->
+		     	     	     
+		     	     	     member(1, MAXVAR) & set.findFirstBoxLeft!(1) ->
+		     	     	     SKIP
+		     	     	   ) else (
+		     	     	     SKIP
+		     	     	   ) 
+		     	     	 within
+		     	     	   IFONLY
+		     	     ) 
+		     	     ; 	  
+		     	     
+		     	     get.lastBoxLeft?lastBoxLeftVar ->
+		     	     get.countForward?countForwardVar ->
+		     	     
+		     	     member(countForwardVar, MAXVAR) & set.lastBoxLeft!(countForwardVar) ->
+		     	     SKIP
+		     	   ) else (
+		     	     SKIP
+		     	   ) 
+		     	 within
+		     	   IFONLY
+		     ) 
+		     ; 	  
+		     
+		     SKIP
+		   ) else (
+		     (let
+		        ELSEIFONLY =
+		          get.X?x -> 
+		     	   get.Y?y -> 
+		     	   get.ORIENTATION?o -> 
+		     	   get.BX?bx -> 
+		     	   get.BY?by -> 
+		     	   coin?c ->
+		     	   get.side?sideVar ->
+		     	    
+		     	   if((sideVar == 2)) then (
+		     	     (let
+		     	        IFONLY =
+		     	          get.X?x -> 
+		     	     	   get.Y?y -> 
+		     	     	   get.ORIENTATION?o -> 
+		     	     	   get.BX?bx -> 
+		     	     	   get.BY?by -> 
+		     	     	   coin?c ->
+		     	     	    
+		     	     	   if(rightIsObstacle(x,y,o)) then (
+		     	     	     get.countLastLine?countLastLineVar ->
+		     	     	     get.countLastLine?countLastLineVar ->
+		     	     	     
+		     	     	     member((countLastLineVar + 1), MAXVAR) & set.countLastLine!((countLastLineVar + 1)) ->
+		     	     	     (let
+		     	     	        IFONLY =
+		     	     	          get.X?x -> 
+		     	     	     	   get.Y?y -> 
+		     	     	     	   get.ORIENTATION?o -> 
+		     	     	     	   get.BX?bx -> 
+		     	     	     	   get.BY?by -> 
+		     	     	     	   coin?c ->
+		     	     	     	   get.findFirstBoxRight?findFirstBoxRightVar ->
+		     	     	     	    
+		     	     	     	   if(not ((findFirstBoxRightVar == 0))) then (
+		     	     	     	     get.firstBoxRight?firstBoxRightVar ->
+		     	     	     	     get.countForward?countForwardVar ->
+		     	     	     	     
+		     	     	     	     member(countForwardVar, MAXVAR) & set.firstBoxRight!(countForwardVar) ->
+		     	     	     	     get.findFirstBoxRight?findFirstBoxRightVar ->
+		     	     	     	     
+		     	     	     	     member(1, MAXVAR) & set.findFirstBoxRight!(1) ->
+		     	     	     	     SKIP
+		     	     	     	   ) else (
+		     	     	     	     SKIP
+		     	     	     	   ) 
+		     	     	     	 within
+		     	     	     	   IFONLY
+		     	     	     ) 
+		     	     	     ; 	  
+		     	     	     
+		     	     	     get.lastBoxRight?lastBoxRightVar ->
+		     	     	     get.countForward?countForwardVar ->
+		     	     	     
+		     	     	     member(countForwardVar, MAXVAR) & set.lastBoxRight!(countForwardVar) ->
+		     	     	     SKIP
+		     	     	   ) else (
+		     	     	     SKIP
+		     	     	   ) 
+		     	     	 within
+		     	     	   IFONLY
+		     	     ) 
+		     	     ; 	  
+		     	     
+		     	     SKIP
+		     	   ) else (
+		     	     SKIP
+		     	   ) 
+		     	 within
+		     	   ELSEIFONLY
+		     )
+		     
+		   ) 
+		 within
+		   IFELSE
+	) 
+	; 	 
+	
+	SKIP		
+countRightProc() =
+	
+	(let
+	   IFONLY =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		    
+		   if(rightIsObstacle(x,y,o)) then (
+		     get.countLastLine?countLastLineVar ->
+		     get.countLastLine?countLastLineVar ->
+		     
+		     member((countLastLineVar + 1), MAXVAR) & set.countLastLine!((countLastLineVar + 1)) ->
+		     (let
+		        IFONLY =
+		          get.X?x -> 
+		     	   get.Y?y -> 
+		     	   get.ORIENTATION?o -> 
+		     	   get.BX?bx -> 
+		     	   get.BY?by -> 
+		     	   coin?c ->
+		     	   get.findFirstBoxRight?findFirstBoxRightVar ->
+		     	    
+		     	   if(not ((findFirstBoxRightVar == 0))) then (
+		     	     get.firstBoxRight?firstBoxRightVar ->
+		     	     get.countForward?countForwardVar ->
+		     	     
+		     	     member(countForwardVar, MAXVAR) & set.firstBoxRight!(countForwardVar) ->
+		     	     get.findFirstBoxRight?findFirstBoxRightVar ->
+		     	     
+		     	     member(1, MAXVAR) & set.findFirstBoxRight!(1) ->
+		     	     SKIP
+		     	   ) else (
+		     	     SKIP
+		     	   ) 
+		     	 within
+		     	   IFONLY
+		     ) 
+		     ; 	  
+		     
+		     get.lastBoxRight?lastBoxRightVar ->
+		     get.countForward?countForwardVar ->
+		     
+		     member(countForwardVar, MAXVAR) & set.lastBoxRight!(countForwardVar) ->
+		     SKIP
+		   ) else (
+		     SKIP
+		   ) 
+		 within
+		   IFONLY
+	) 
+	; 	  
+	
+	SKIP		
+showsMoreBoxesProc() =
+	
+	(let
+	   IFELSE =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		   get.countFirstLine?countFirstLineVar ->
+		   get.countLastLine?countLastLineVar ->
+		    
+		   if((countFirstLineVar > countLastLineVar)) then (
+		     
+		     showInt!(1) ->
+		     get.countFirstLine?countFirstLineVar ->
+		     get.countLastLine?countLastLineVar ->
+		     
+		     showInt!((countFirstLineVar - countLastLineVar)) ->
+		     SKIP
+		   ) else (
+		     (let
+		        ELSEIFELSE = 
+		          get.X?x -> 
+		          get.Y?y -> 
+		          get.ORIENTATION?o -> 
+		          get.BX?bx -> 
+		          get.BY?by -> 
+		     	   coin?c ->
+		     	   get.countFirstLine?countFirstLineVar ->
+		     	   get.countLastLine?countLastLineVar ->
+		     	    
+		          if((countFirstLineVar < countLastLineVar)) then (
+		            
+		            showInt!(2) ->
+		            get.countLastLine?countLastLineVar ->
+		            get.countFirstLine?countFirstLineVar ->
+		            
+		            showInt!((countLastLineVar - countFirstLineVar)) ->
+		            SKIP 
+		          ) else (
+		            
+		            showInt!(3) ->
+		            get.countLastLine?countLastLineVar ->
+		            get.countFirstLine?countFirstLineVar ->
+		            
+		            showInt!((countLastLineVar - countFirstLineVar)) ->
+		            SKIP
+		          ) 
+		        within
+		          ELSEIFELSE
+		     )
+		     
+		   ) 
+		 within
+		   IFELSE
+	) 
+	; 	 
+	
+	SKIP		
+getBoxFirstLineProc() =
+	
+	(let
+	   IFELSE =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		   get.firstBoxLeft?firstBoxLeftVar ->
+		   get.firstBoxRight?firstBoxRightVar ->
+		    
+		   if((firstBoxLeftVar < firstBoxRightVar)) then (
+		     
+		     showInt!(1) ->
+		     SKIP
+		   ) else (
+		     (let
+		        ELSEIFELSE = 
+		          get.X?x -> 
+		          get.Y?y -> 
+		          get.ORIENTATION?o -> 
+		          get.BX?bx -> 
+		          get.BY?by -> 
+		     	   coin?c ->
+		     	   get.firstBoxLeft?firstBoxLeftVar ->
+		     	   get.firstBoxRight?firstBoxRightVar ->
+		     	    
+		          if((firstBoxLeftVar > firstBoxRightVar)) then (
+		            
+		            showInt!(2) ->
+		            SKIP 
+		          ) else (
+		            
+		            showInt!(3) ->
+		            SKIP
+		          ) 
+		        within
+		          ELSEIFELSE
+		     )
+		     
+		   ) 
+		 within
+		   IFELSE
+	) 
+	; 	 
+	
+	SKIP		
+getBoxLastLineProc() =
+	
+	(let
+	   IFELSE =
+	     get.X?x -> 
+		   get.Y?y -> 
+		   get.ORIENTATION?o -> 
+		   get.BX?bx -> 
+		   get.BY?by -> 
+		   coin?c ->
+		   get.lastBoxLeft?lastBoxLeftVar ->
+		   get.lastBoxRight?lastBoxRightVar ->
+		    
+		   if((lastBoxLeftVar > lastBoxRightVar)) then (
+		     
+		     showInt!(1) ->
+		     SKIP
+		   ) else (
+		     (let
+		        ELSEIFELSE = 
+		          get.X?x -> 
+		          get.Y?y -> 
+		          get.ORIENTATION?o -> 
+		          get.BX?bx -> 
+		          get.BY?by -> 
+		     	   coin?c ->
+		     	   get.lastBoxLeft?lastBoxLeftVar ->
+		     	   get.lastBoxRight?lastBoxRightVar ->
+		     	    
+		          if((lastBoxLeftVar < lastBoxRightVar)) then (
+		            
+		            showInt!(2) ->
+		            SKIP 
+		          ) else (
+		            
+		            showInt!(3) ->
+		            SKIP
+		          ) 
+		        within
+		          ELSEIFELSE
+		     )
+		     
+		   ) 
+		 within
+		   IFELSE
+	) 
+	; 	 
+	
+	SKIP		
+
+COMMANDS = 
+	RIGHT
+	; 	  
+	
+	(let
+	   WHILE = 
+	     
+	     FORWARD(1)
+	       ;
+	     
+	     SKIP 
+	     ; 
+	     WHILE
+	 within
+	   WHILE
+	)
+	; 	  
+	
+	
+	countLeftProc()
+	;
+	
+	
+	countRightProc()
+	;
+	
+	get.countFirstLine?countFirstLineVar ->
+	
+	showInt!(countFirstLineVar) ->
+	get.countLastLine?countLastLineVar ->
+	
+	showInt!(countLastLineVar) ->
+	
+	showsMoreBoxesProc()
+	;
+	
+	
+	getBoxFirstLineProc()
+	;
+	
+	
+	getBoxLastLineProc()
+	;
+	
+	SKIP

@@ -1,0 +1,8 @@
+include "robomodel_simp.csp"
+include "map3.csp"
+include "solution_big.csp"
+
+STATIC_BEACON = true
+
+--does the program terminates?
+assert PROGRAM :[deadlock free [F]]

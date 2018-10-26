@@ -1,59 +1,76 @@
-PROCEDURE1(boxes) = 
+
+nametype MAXVAR = {0..5}
+datatype VarType = boxes.MAXVAR | X.TX | Y.TY | ORIENTATION.TO | BX.TBX | BY.TBY
+INIT = { (boxes,0), (X, startX), (Y, startY), (ORIENTATION, NORTH_), (BX, startBX), (BY, startBY) }
+
+aroundBoxesProc(boxesParam) =
+	set.boxes!(boxesParam) -> 
+	
 	(let
 	   CMDS = 
 	     (let
 	        IFELSE =
-	           get.X?x -> 
+	          get.X?x -> 
 	     	   get.Y?y -> 
 	     	   get.ORIENTATION?o -> 
 	     	   get.BX?bx -> 
 	     	   get.BY?by -> 
-	     	   coin?c -> 
+	     	   coin?c ->
+	     	    
 	     	   if(frontIsObstacle(x,y,o)) then (
 	     	     RIGHT
-	     	     ; 
-	     	     FORWARD(1)
-	     	     ;
-	     	     LEFT
-	     	     ; 
-	     	     FORWARD(2)
-	     	     ;
-	     	     LEFT
-	     	     ; 
-	     	     FORWARD(1)
-	     	     ;
-	     	     RIGHT
-	     	     ; 
-	     	     SKIP     	     
-	     	   ) else (
-	     	     FORWARD(1)
-	     	     ;
-	     	     SKIP
+	     	     ; 	  
 	     	     
+	     	     
+	     	     FORWARD(1)
+	     	       ;
+	     	     
+	     	     LEFT
+	     	     ; 	 
+	     	     
+	     	     
+	     	     FORWARD(2)
+	     	       ;
+	     	     
+	     	     LEFT
+	     	     ; 	 
+	     	     
+	     	     
+	     	     FORWARD(1)
+	     	       ;
+	     	     
+	     	     RIGHT
+	     	     ; 	  
+	     	     
+	     	     SKIP
+	     	   ) else (
+	     	     
+	     	     FORWARD(1)
+	     	       ;
+	     	     
+	     	     SKIP
 	     	   ) 
 	     	 within
 	     	   IFELSE
 	     ) 
-	     ; 
-	     SKIP
+	     ; 	 
 	     
+	     SKIP
 	 within
-	   REPEAT(CMDS, boxes)
+	 	 get.boxes?boxesVar ->
+	 	 
+	   REPEAT(CMDS, boxesVar) 
 	)
-	; 
-	SKIP
+	;      
+	
+	SKIP		
 
-COMMANDS =
-	RIGHT ;
-	PROCEDURE1(4)
---realizar uma pre analise do código
---recolher os nomes
---parametros literais
---copiar
---pensar a regra direta no spoofax	
---se nao existe dar uma retorno atraves do fdr
---olhar na tabela de nome, se já existe (nao precisaria esperar o fdr)
---ordem natural definicao e chamada
---duas regras principais
---1chamada de procedimento
---2definicao de procedimento
+COMMANDS = 
+	RIGHT
+	; 	  
+	
+	
+	aroundBoxesProc(4)
+	;
+	
+	SKIP

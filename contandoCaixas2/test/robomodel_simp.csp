@@ -385,7 +385,6 @@ PROGRAM = PROGRAM_DEBUG \ {|get,set,coin|}
 --
 -- simulation model for verification with test purposes
 --
-
 channel get2 : VarType
 MEMORY_GET2 = MEMORY [[ get.x <- get.x, get.x <- get2.x | x <- extensions(get) ]]
 PROGRAM_DEBUG_GET2 = (COMMANDS [|{|get,set|}|] MEMORY_GET2) \ {|get,set,coin|}

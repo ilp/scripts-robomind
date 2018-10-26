@@ -1,0 +1,5 @@
+- quando declarar uma var tem que ser global e ter um valor inicial
+- o que fazer quando um parametro de um procedimento é atualizado?
+- dar uma mensagem de erro quando passar dos limites superior e inferior das variaveis
+- ajustar nome choice
+- aproveitar o vazio para colocar SKIP

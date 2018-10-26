@@ -1,0 +1,121 @@
+countFirstLine = 0
+countLastLine = 0
+
+findFirstBoxLeft = 0
+findFirstBoxRight = 0
+firstBoxLeft = 10
+firstBoxRight = 10
+
+lastBoxLeft = 0
+lastBoxRight = 0
+
+countForward = 0
+
+procedure countBoxes(side){
+    if(side == 1){
+        if(leftIsObstacle){
+            countFirstLine = countFirstLine + 1
+            
+            if(not findFirstBoxLeft == 0){
+                firstBoxLeft = countForward
+                findFirstBoxLeft = 1
+            }    
+            
+            lastBoxLeft = countForward              
+        }
+    } else if(side == 2){
+        if(rightIsObstacle){
+            countLastLine = countLastLine + 1
+            
+            if(not findFirstBoxRight == 0){
+                firstBoxRight = countForward
+                findFirstBoxRight = 1
+            }
+            
+            lastBoxRight = countForward
+        }
+    }
+}
+
+
+procedure countLeft{
+    if(leftIsObstacle){
+        countFirstLine = countFirstLine + 1
+        
+        if(not findFirstBoxLeft == 0){
+            firstBoxLeft = countForward
+            findFirstBoxLeft = 1
+        }    
+        
+        lastBoxLeft = countForward              
+    }
+}
+
+procedure countRight(){
+    if(rightIsObstacle){
+        countLastLine = countLastLine + 1
+        
+        if(not findFirstBoxRight == 0){
+            firstBoxRight = countForward
+            findFirstBoxRight = 1
+        }
+        
+        lastBoxRight = countForward
+    }
+}
+
+procedure showsMoreBoxes(){
+    
+    if(countFirstLine > countLastLine){
+        show(1)
+        show(countFirstLine - countLastLine)
+    } else if(countFirstLine < countLastLine){
+        show(2)
+        show(countLastLine - countFirstLine)
+    } else{
+        show(3)
+        show(countLastLine - countFirstLine)
+    }
+}
+
+procedure getBoxFirstLine(){
+    if(firstBoxLeft < firstBoxRight){
+        show(1)
+    } else if(firstBoxLeft > firstBoxRight){
+        show(2)
+    } else {
+        show(3)
+    }
+}
+
+procedure getBoxLastLine(){
+    if(lastBoxLeft > lastBoxRight){
+        show(1)
+    } else if(lastBoxLeft < lastBoxRight){
+        show(2)
+    } else {
+        show(3)
+    }
+}
+
+procedure program(){
+    
+    right
+    
+    repeatWhile(frontIsClear){
+        countLeft()
+        countRight()  
+        forward(1)
+        countForward = countForward + 1
+    }
+
+    countLeft()
+    countRight()  
+    show(countFirstLine)
+    show(countLastLine)
+    showsMoreBoxes()
+    getBoxFirstLine()
+    getBoxLastLine()
+}
+
+program()  
